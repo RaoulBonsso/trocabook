@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { EmailService } from '../email/email.service';
 import { FirebaseService } from '../firebase/firebase.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { CreateMessageDto } from './dto/create-message.dto';
@@ -9,7 +10,10 @@ import { Message } from './entities/message.entity';
 export class ChatsService {
   private chatsCollection = 'chats';
 
-  constructor(private readonly firebaseService: FirebaseService) {}
+  constructor(
+    private readonly firebaseService: FirebaseService,
+    private readonly emailService: EmailService,
+  ) {}
 
   async createChat(createChatDto: CreateChatDto): Promise<Chat> {
     const firestore = this.firebaseService.getFirestore();
@@ -93,7 +97,58 @@ export class ChatsService {
           date_envoi: new Date(),
       };
       await docRef.set(message);
+
+      // 💬 Envoyer une notification email au destinataire (non-bloquant)
+      this.sendEmailNotification(chatDoc, userId).catch(err => {
+          console.error('Email notification error (non-blocking):', err);
+      });
+
       return message;
+  }
+
+  /**
+   * Envoie une notification email au destinataire d'un message
+   */
+  private async sendEmailNotification(chatDoc: any, senderId: string): Promise<void> {
+      try {
+          const firestore = this.firebaseService.getFirestore();
+          const chatData = chatDoc.data();
+          const echangeId = chatData?.echange_id;
+          
+          if (!echangeId) return;
+
+          // Récupérer l'échange pour trouver le destinataire
+          const echangeDoc = await firestore.collection('echanges').doc(echangeId).get();
+          if (!echangeDoc.exists) return;
+
+          const echangeData = echangeDoc.data();
+          // Déterminer qui est le destinataire (l'autre personne dans l'échange)
+          const recipientId = echangeData?.parent_offreur_id === senderId 
+              ? echangeData?.parent_demandeur_id 
+              : echangeData?.parent_offreur_id;
+          
+          if (!recipientId) return;
+
+          // Récupérer les infos du destinataire et de l'expéditeur
+          const [recipientDoc, senderDoc] = await Promise.all([
+              firestore.collection('parents').doc(recipientId).get(),
+              firestore.collection('parents').doc(senderId).get(),
+          ]);
+          
+          if (recipientDoc.exists && senderDoc.exists) {
+              const recipientData = recipientDoc.data();
+              const senderData = senderDoc.data();
+              
+              await this.emailService.sendMessageNotificationEmail(
+                  recipientData?.email,
+                  recipientData?.prenom,
+                  senderData?.prenom,
+              );
+          }
+      } catch (error) {
+          // Erreur loggée mais ne bloque pas l'envoi du message
+          throw error;
+      }
   }
 
   async findAllMessages(chatId: string): Promise<Message[]> {
