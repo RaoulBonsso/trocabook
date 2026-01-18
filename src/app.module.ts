@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { ChatsModule } from './chats/chats.module';
+import { EmailModule } from './email/email.module';
 import { EnfantsModule } from './enfants/enfants.module';
 import { EvaluationsModule } from './evaluations/evaluations.module';
 import { FavorisModule } from './favoris/favoris.module';
@@ -16,6 +17,7 @@ import { UsersModule } from './users/users.module';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     FirebaseModule.forRoot(),
+    EmailModule,
     AuthModule,
     UsersModule,
     EnfantsModule,

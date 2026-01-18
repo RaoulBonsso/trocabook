@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
+import { EmailService } from '../email/email.service';
 import { FirebaseService } from '../firebase/firebase.service';
 import { RegisterUserDto } from './dto/register-user.dto';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly firebaseService: FirebaseService) {}
+  constructor(
+    private readonly firebaseService: FirebaseService,
+    private readonly emailService: EmailService,
+  ) {}
 
   /**
    * Registers a new user in Firebase.
@@ -14,7 +18,6 @@ export class UsersService {
    */
   async registerUser(dto: RegisterUserDto) {
     // Create user in Firebase Authentication
-    // We do not pass password to Firestore to avoid security risks, Auth handles it.
     const user = await this.firebaseService.createUser({
       displayName: `${dto.firstName} ${dto.lastName}`,
       email: dto.email,
@@ -49,6 +52,11 @@ export class UsersService {
     };
     
     await firestore.collection('parents').doc(user.uid).set(parentData);
+
+    // 🎉 Envoyer l'email de bienvenue (non-bloquant)
+    this.emailService.sendWelcomeEmail(dto.email, dto.firstName).catch(err => {
+      console.error('Email error (non-blocking):', err);
+    });
 
     return user;
   }
