@@ -1,34 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-    IsDateString,
-    IsNotEmpty,
-    IsOptional,
-    IsString,
-} from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateTransactionDto {
-  @ApiProperty({ description: 'Book ID' })
+  @ApiProperty({ description: 'ID of the parent making the offer/book owner' })
+  @IsNotEmpty()
+  @IsString()
+  parent_offreur_id: string;
+
+  // parent_demandeur_id usually comes from auth token (req.user.uid)
+
+  @ApiProperty({ description: 'ID of the book involved in the initial exchange proposal' })
   @IsNotEmpty()
   @IsString()
   livre_id: string;
 
-  @ApiProperty({ description: 'Seller ID' })
-  @IsNotEmpty()
-  @IsString()
-  vendeur_id: string;
-
-  @ApiProperty({ description: 'Type: achat, echange, don' })
-  @IsNotEmpty()
-  @IsString()
-  type_transaction: string;
-
-  @ApiProperty({ description: 'Rendez-vous location', required: false })
-  @IsOptional()
-  @IsString()
-  rendezvous_localisation?: string;
-
-  @ApiProperty({ description: 'Rendez-vous date', required: false })
-  @IsOptional()
-  @IsDateString()
-  rendezvous_date?: string;
+  // Initial role for the book (usually 'recoit' from demandeur perspective or 'donne' from offreur perspective?)
+  // If demandeur initiates, they want to RECEIVE the book 'livre_id'.
+  // So 'livre_id' is owned by 'parent_offreur_id'.
 }

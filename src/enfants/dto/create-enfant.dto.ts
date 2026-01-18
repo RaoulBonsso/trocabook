@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateEnfantDto {
   @ApiProperty({ description: 'Parent ID' })
@@ -7,12 +7,7 @@ export class CreateEnfantDto {
   @IsString()
   parent_id: string;
 
-  @ApiProperty({ description: 'First name' })
-  @IsNotEmpty()
-  @IsString()
-  prenom: string;
-
-  @ApiProperty({ description: 'Last name' })
+  @ApiProperty({ description: 'Nom' })
   @IsNotEmpty()
   @IsString()
   nom: string;
@@ -27,8 +22,13 @@ export class CreateEnfantDto {
   @IsString()
   classe: string;
 
-  @ApiProperty({ description: 'Other information', required: false })
-  @IsOptional()
+  @ApiProperty({ description: 'Ecole' })
+  @IsNotEmpty()
   @IsString()
-  autres_infos?: string;
+  ecole: string;
+
+  @ApiProperty({ description: 'Matieres', type: [String] })
+  @IsArray()
+  @IsString({ each: true })
+  matieres: string[];
 }

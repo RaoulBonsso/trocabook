@@ -30,18 +30,25 @@ export class UsersService {
 
     // Store additional parent details in Firestore 'parents' collection
     const firestore = this.firebaseService.getFirestore();
-    await firestore.collection('parents').doc(user.uid).set({
+    const parentData = {
       id: user.uid,
       nom: dto.lastName,
       prenom: dto.firstName,
-      age: dto.age,
-      nombre_enfants: dto.numberOfChildren,
-      telephone: dto.telephone,
-      localisation: dto.location,
       email: dto.email,
-      // mot_de_passe: 'SECURED_IN_AUTH', // Not storing actual password
+      telephone: dto.telephone,
+      ville: dto.ville,
+      localisation_lat: dto.latitude,
+      localisation_lng: dto.longitude,
+      image_profil: dto.profileImage || '',
+      nombre_enfants: dto.numberOfChildren,
+      note_moyenne: 0,
+      nombre_echanges: 0,
+      statut_compte: 'actif',
       date_inscription: new Date(),
-    });
+      derniere_connexion: new Date(),
+    };
+    
+    await firestore.collection('parents').doc(user.uid).set(parentData);
 
     return user;
   }

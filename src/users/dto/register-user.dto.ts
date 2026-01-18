@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
     IsArray,
     IsEmail,
@@ -20,26 +20,6 @@ export class RegisterUserDto {
   @IsString()
   lastName: string;
 
-  @ApiProperty({ description: "The user's age" })
-  @IsNotEmpty()
-  @IsNumber()
-  age: number;
-
-  @ApiProperty({ description: 'Number of children' })
-  @IsNotEmpty()
-  @IsNumber()
-  numberOfChildren: number;
-
-  @ApiProperty({ description: 'Telephone number' })
-  @IsNotEmpty()
-  @IsString()
-  telephone: string;
-
-  @ApiProperty({ description: 'Location' })
-  @IsNotEmpty()
-  @IsString()
-  location: string;
-
   @ApiProperty({ description: "The user's email address" })
   @IsNotEmpty()
   @IsEmail()
@@ -47,8 +27,45 @@ export class RegisterUserDto {
 
   @ApiProperty({ description: "The user's password" })
   @IsNotEmpty()
-  @Length(8, 100)
+  @Length(6, 100)
   password: string;
+
+  @ApiProperty({ description: 'Telephone number' })
+  @IsNotEmpty()
+  @IsString()
+  telephone: string;
+
+  @ApiProperty({ description: 'City' })
+  @IsNotEmpty()
+  @IsString()
+  ville: string;
+
+  @ApiProperty({ description: 'Latitude' })
+  @IsNotEmpty()
+  @IsNumber()
+  latitude: number;
+
+  @ApiProperty({ description: 'Longitude' })
+  @IsNotEmpty()
+  @IsNumber()
+  longitude: number;
+
+  @ApiPropertyOptional({ description: 'Profile image URL' })
+  @IsOptional()
+  @IsString()
+  profileImage?: string;
+
+  @ApiProperty({ description: 'Number of children' })
+  @IsNotEmpty()
+  @IsNumber()
+  numberOfChildren: number;
+
+  // Keeping age as optional if frontend still sends it, but it's not in the main schema request.
+  // I will make it optional to avoid breaking if frontend still sends it.
+  @ApiPropertyOptional({ description: "The user's age" })
+  @IsOptional()
+  @IsNumber()
+  age?: number;
 
   @ApiProperty({
     description: "The user's roles",

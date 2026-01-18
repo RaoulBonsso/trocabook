@@ -1,11 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+    IsArray,
     IsBoolean,
     IsNotEmpty,
     IsNumber,
     IsOptional,
-    IsString,
-    IsUrl
+    IsString
 } from 'class-validator';
 
 export class CreateLivreDto {
@@ -14,43 +14,67 @@ export class CreateLivreDto {
   @IsString()
   titre: string;
 
-  @ApiProperty({ description: 'Author of the book' })
+  @ApiProperty({ description: 'Subject/Matiere' })
   @IsNotEmpty()
   @IsString()
-  auteur: string;
+  matiere: string;
 
-  @ApiProperty({ description: 'Description of the book' })
+  @ApiProperty({ description: 'Class/Grade' })
+  @IsNotEmpty()
+  @IsString()
+  classe: string;
+
+  @ApiProperty({ description: 'School' })
+  @IsNotEmpty()
+  @IsString()
+  ecole: string;
+
+  @ApiProperty({ description: 'Condition (neuf, bon, moyen, mauvais)' })
+  @IsNotEmpty()
+  @IsString()
+  etat: 'neuf' | 'bon' | 'moyen' | 'mauvais';
+
+  @ApiProperty({ description: 'Description' })
   @IsNotEmpty()
   @IsString()
   description: string;
 
-  @ApiProperty({ description: 'Category' })
-  @IsNotEmpty()
-  @IsString()
-  categorie: string;
-
-  @ApiProperty({ description: 'Year of publication' })
-  @IsNotEmpty()
-  @IsNumber()
-  annee_publication: number;
-
-  @ApiProperty({ description: 'Condition/State of the book' })
-  @IsNotEmpty()
-  @IsString()
-  etat: string;
+  @ApiProperty({ description: 'Images URLs' })
+  @IsArray()
+  @IsString({ each: true })
+  images: string[];
 
   @ApiProperty({ description: 'Language' })
   @IsNotEmpty()
   @IsString()
   langue: string;
 
-  @ApiProperty({ description: 'Image URL', required: false })
-  @IsOptional()
-  @IsUrl()
-  image_url?: string;
+  @ApiProperty({ description: 'School Year' })
+  @IsNotEmpty()
+  @IsString()
+  annee_scolaire: string;
 
   @ApiProperty({ description: 'Is available?', default: true })
   @IsOptional()
   @IsBoolean()
-  disponible?: boolean = true;
+  disponible: boolean = true;
+
+  @ApiProperty({ description: 'Status' })
+  @IsNotEmpty()
+  @IsString()
+  statut: 'disponible' | 'en_negociation' | 'echange';
+
+  @ApiProperty({ description: 'Latitude' })
+  @IsNotEmpty()
+  @IsNumber()
+  localisation_lat: number;
+
+  @ApiProperty({ description: 'Longitude' })
+  @IsNotEmpty()
+  @IsNumber()
+  localisation_lng: number;
+
+  // proprietaire_id will be extracted from the authenticated user usually, but if needed in DTO:
+  // But usually controller handles this from Request user. 
+  // I will assume it's passed or handled in controller.
 }

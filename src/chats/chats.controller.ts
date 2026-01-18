@@ -21,8 +21,8 @@ export class ChatsController {
   constructor(private readonly chatsService: ChatsService) {}
 
   @Post()
-  createChat(@Body() createChatDto: CreateChatDto, @Req() req: any) {
-    return this.chatsService.createChat(createChatDto, req.user.uid);
+  createChat(@Body() createChatDto: CreateChatDto) {
+    return this.chatsService.createChat(createChatDto);
   }
 
   @Get()

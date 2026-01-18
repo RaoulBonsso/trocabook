@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class CreateChatDto {
-  @ApiProperty({ description: 'Echange ID' })
+export class CreateFavoriDto {
+  @ApiProperty({ description: 'Book ID' })
   @IsNotEmpty()
   @IsString()
-  echange_id: string;
+  livre_id: string;
 }
