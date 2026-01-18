@@ -13,9 +13,10 @@ export class UsersService {
    * @returns The created user object from Firebase
    */
   async registerUser(dto: RegisterUserDto) {
-    // Create use in Firebase Authentication
+    // Create user in Firebase Authentication
+    // We do not pass password to Firestore to avoid security risks, Auth handles it.
     const user = await this.firebaseService.createUser({
-      displayName: dto.firstName,
+      displayName: `${dto.firstName} ${dto.lastName}`,
       email: dto.email,
       password: dto.password,
     });
@@ -26,6 +27,22 @@ export class UsersService {
         roles: dto.roles,
       });
     }
+
+    // Store additional parent details in Firestore 'parents' collection
+    const firestore = this.firebaseService.getFirestore();
+    await firestore.collection('parents').doc(user.uid).set({
+      id: user.uid,
+      nom: dto.lastName,
+      prenom: dto.firstName,
+      age: dto.age,
+      nombre_enfants: dto.numberOfChildren,
+      telephone: dto.telephone,
+      localisation: dto.location,
+      email: dto.email,
+      // mot_de_passe: 'SECURED_IN_AUTH', // Not storing actual password
+      date_inscription: new Date(),
+    });
+
     return user;
   }
 }

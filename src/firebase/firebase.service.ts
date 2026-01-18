@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { FirebaseConfigService } from './firebase-config.service';
-import { CreateRequest, DecodedIdToken, UserRecord } from 'firebase-admin/auth';
-import * as firebaseAdmin from 'firebase-admin';
 import axios from 'axios';
+import * as firebaseAdmin from 'firebase-admin';
+import { CreateRequest, DecodedIdToken, UserRecord } from 'firebase-admin/auth';
+import { FirebaseConfigService } from './firebase-config.service';
 
 
 @Injectable()
@@ -97,5 +97,9 @@ export class FirebaseService {
   }
   async setCustomUserClaims(uid: string, claims: Record<string, any>) {
     return await firebaseAdmin.auth().setCustomUserClaims(uid, claims);
+  }
+
+  getFirestore() {
+    return firebaseAdmin.firestore();
   }
 }
