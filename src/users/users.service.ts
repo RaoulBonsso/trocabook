@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { FirebaseService } from 'src/firebase/firebase.service';
+import { FirebaseService } from '../firebase/firebase.service';
 import { RegisterUserDto } from './dto/register-user.dto';
 
 @Injectable()

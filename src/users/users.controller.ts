@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { IdToken } from 'src/common/decorators/id-token.decorator';
-import { AuthGuard } from 'src/common/guards/auth.guard';
-import { FirebaseService } from 'src/firebase/firebase.service';
+import { IdToken } from '../common/decorators/id-token.decorator';
+import { AuthGuard } from '../common/guards/auth.guard';
+import { FirebaseService } from '../firebase/firebase.service';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { UsersService } from './users.service';
 

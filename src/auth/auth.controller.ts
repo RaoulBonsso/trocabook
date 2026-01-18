@@ -1,8 +1,8 @@
 import { Body, Controller, HttpCode, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { IdToken } from 'src/common/decorators/id-token.decorator';
-import { AuthGuard } from 'src/common/guards/auth.guard';
-import { LoginDto } from 'src/users/dto/login.dto';
+import { IdToken } from '../common/decorators/id-token.decorator';
+import { AuthGuard } from '../common/guards/auth.guard';
+import { LoginDto } from '../users/dto/login.dto';
 import { AuthService } from './auth.service';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 

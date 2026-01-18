@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { FirebaseService } from 'src/firebase/firebase.service';
-import { LoginDto } from 'src/users/dto/login.dto';
+import { FirebaseService } from '../firebase/firebase.service';
+import { LoginDto } from '../users/dto/login.dto';
 
 @Injectable()
 export class AuthService {
