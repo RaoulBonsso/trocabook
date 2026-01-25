@@ -5,6 +5,9 @@ import { AuthGuard } from '../common/guards/auth.guard';
 import { LoginDto } from '../users/dto/login.dto';
 import { AuthService } from './auth.service';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { SocialLoginDto } from './dto/social-login.dto';
+
+
 
 
 @Controller('auth')
@@ -49,9 +52,10 @@ export class AuthController {
    */
   @Post('google')
   @HttpCode(200)
-  loginWithGoogle(@Body('idToken') idToken: string) {
-    return this.authService.loginWithGoogle(idToken);
+  loginWithGoogle(@Body() dto: SocialLoginDto) {
+    return this.authService.loginWithGoogle(dto.idToken);
   }
+
 
   /**
    * Phone Number Login.
@@ -59,9 +63,10 @@ export class AuthController {
    */
   @Post('phone')
   @HttpCode(200)
-  loginWithPhone(@Body('idToken') idToken: string) {
-    return this.authService.loginWithPhone(idToken);
+  loginWithPhone(@Body() dto: SocialLoginDto) {
+    return this.authService.loginWithPhone(dto.idToken);
   }
+
 }
 
 
