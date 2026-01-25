@@ -25,18 +25,13 @@ async function bootstrap() {
     .setVersion('1.0.0')
     .addTag('books')
     .addBearerAuth()
+    .addServer('https://trocabook.vercel.app', 'Production server')
+    .addServer('http://localhost:3001', 'Local server')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document, {
-    customSiteTitle: 'Trocabook API',
-    customCssUrl: 'https://unpkg.com/swagger-ui-dist@5.31.0/swagger-ui.css',
-    customJs: [
-      'https://unpkg.com/swagger-ui-dist@5.31.0/swagger-ui-bundle.js',
-      'https://unpkg.com/swagger-ui-dist@5.31.0/swagger-ui-standalone-preset.js',
-    ],
-  });
+  SwaggerModule.setup('api', app, document);
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.PORT ?? 3001);
   console.log(`Application is running on: ${await app.getUrl()}`);
 }
 bootstrap();    
