@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
+import { BackofficeUsersModule } from './backoffice-users/backoffice-users.module';
 import { ChatsModule } from './chats/chats.module';
+import { ReputationModule } from './common/reputation.module';
 import { EmailModule } from './email/email.module';
 import { EnfantsModule } from './enfants/enfants.module';
 import { EvaluationsModule } from './evaluations/evaluations.module';
@@ -12,7 +14,6 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { SignalementsModule } from './signalements/signalements.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { UsersModule } from './users/users.module';
-import { BackofficeUsersModule } from './backoffice-users/backoffice-users.module';
 
 @Module({
   imports: [
@@ -30,6 +31,8 @@ import { BackofficeUsersModule } from './backoffice-users/backoffice-users.modul
     SignalementsModule,
     FavorisModule,
     BackofficeUsersModule,
+    ReputationModule,
   ],
 })
+
 export class AppModule {}

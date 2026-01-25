@@ -40,4 +40,15 @@ export class TransactionsController {
   update(@Param('id') id: string, @Body() updateTransactionDto: UpdateTransactionDto) {
     return this.transactionsService.update(id, updateTransactionDto);
   }
+
+  @Patch(':id/negotiate')
+  negotiate(@Param('id') id: string, @Body('prix') prix?: number) {
+    return this.transactionsService.negotiate(id, prix);
+  }
+
+  @Patch(':id/accept')
+  accept(@Param('id') id: string) {
+    return this.transactionsService.accept(id);
+  }
 }
+

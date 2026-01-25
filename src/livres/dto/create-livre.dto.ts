@@ -74,7 +74,9 @@ export class CreateLivreDto {
   @IsNumber()
   localisation_lng: number;
 
-  // proprietaire_id will be extracted from the authenticated user usually, but if needed in DTO:
-  // But usually controller handles this from Request user. 
-  // I will assume it's passed or handled in controller.
+  @ApiProperty({ description: 'ID of the child who owns the book' })
+  @IsNotEmpty()
+  @IsString()
+  enfant_id: string;
 }
+

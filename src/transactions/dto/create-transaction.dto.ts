@@ -1,5 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+
 
 export class CreateTransactionDto {
   @ApiProperty({ description: 'ID of the parent making the offer/book owner' })
@@ -14,7 +15,14 @@ export class CreateTransactionDto {
   @IsString()
   livre_id: string;
 
-  // Initial role for the book (usually 'recoit' from demandeur perspective or 'donne' from offreur perspective?)
-  // If demandeur initiates, they want to RECEIVE the book 'livre_id'.
-  // So 'livre_id' is owned by 'parent_offreur_id'.
+  @ApiProperty({ description: 'Type of transaction: echange or achat', enum: ['echange', 'achat'] })
+  @IsNotEmpty()
+  @IsString()
+  type: 'echange' | 'achat';
+
+  @ApiPropertyOptional({ description: 'Price for purchase' })
+  @IsOptional()
+  @IsNumber()
+  prix?: number;
 }
+

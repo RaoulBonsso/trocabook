@@ -44,6 +44,7 @@ export class UsersService {
       localisation_lng: dto.longitude,
       image_profil: dto.profileImage || '',
       nombre_enfants: dto.numberOfChildren,
+      cgu_valide: dto.cgu_valide,
       note_moyenne: 0,
       nombre_echanges: 0,
       statut_compte: 'actif',
@@ -79,5 +80,18 @@ export class UsersService {
         // My FirebaseService doesn't expose it yet.
     }
     return { id, status };
+  }
+
+  async updateProfile(id: string, updateData: Partial<any>) {
+    const firestore = this.firebaseService.getFirestore();
+    await firestore.collection('parents').doc(id).update(updateData);
+    const updated = await firestore.collection('parents').doc(id).get();
+    return updated.data();
+  }
+
+  async findOne(id: string) {
+    const doc = await this.firebaseService.getFirestore().collection('parents').doc(id).get();
+    if (!doc.exists) return null;
+    return doc.data();
   }
 }

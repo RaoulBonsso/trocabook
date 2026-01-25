@@ -97,6 +97,11 @@ export class ChatsService {
           date_envoi: new Date(),
       };
       await docRef.set(message);
+      
+      // 🕒 Mettre à jour la dernière connexion de l'expéditeur
+      await firestore.collection('parents').doc(userId).update({
+          derniere_connexion: new Date(),
+      });
 
       // 💬 Envoyer une notification email au destinataire (non-bloquant)
       this.sendEmailNotification(chatDoc, userId).catch(err => {

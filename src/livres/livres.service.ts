@@ -19,6 +19,7 @@ export class LivresService {
       proprietaire_id: userId,
       date_ajout: new Date(),
       disponible: createLivreDto.disponible ?? true,
+      statut: createLivreDto.statut || 'disponible',
     };
     await docRef.set(livre);
     return livre;
@@ -87,4 +88,54 @@ export class LivresService {
     }
     await docRef.delete();
   }
+
+  async search(query: {
+    matiere?: string;
+    classe?: string;
+    ville?: string;
+    lat?: number;
+    lng?: number;
+    distanceMax?: number; // in km
+  }): Promise<Livre[]> {
+    const firestore = this.firebaseService.getFirestore();
+    let q: any = firestore.collection(this.collectionName).where('disponible', '==', true);
+
+    if (query.matiere) q = q.where('matiere', '==', query.matiere);
+    if (query.classe) q = q.where('classe', '==', query.classe);
+
+    const snapshot = await q.get();
+    let livres = snapshot.docs.map((doc) => ({
+      ...doc.data(),
+      date_ajout: doc.data().date_ajout?.toDate ? doc.data().date_ajout.toDate() : doc.data().date_ajout,
+    })) as Livre[];
+
+    if (query.lat !== undefined && query.lng !== undefined && query.distanceMax !== undefined) {
+      livres = livres.filter((livre) => {
+        const dist = this.getDistance(query.lat!, query.lng!, livre.localisation_lat, livre.localisation_lng);
+        return dist <= query.distanceMax!;
+      });
+    }
+
+
+    return livres;
+  }
+
+  private getDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+    const R = 6371; // km
+    const dLat = (lat2 - lat1) * (Math.PI / 180);
+    const dLon = (lon2 - lon1) * (Math.PI / 180);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+
+  async updateStatut(id: string, statut: 'disponible' | 'en_negociation' | 'echange') {
+    const firestore = this.firebaseService.getFirestore();
+    const disponible = statut === 'disponible';
+    await firestore.collection(this.collectionName).doc(id).update({ statut, disponible });
+    return this.findOne(id);
+  }
 }
+

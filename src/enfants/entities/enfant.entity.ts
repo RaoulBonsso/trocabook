@@ -4,6 +4,7 @@ export class Enfant {
   nom: string;
   age: number;
   classe: string;
-  ecole: string;
-  matieres: string[];
+  ecole?: string;
+  matieres?: string[];
 }
+

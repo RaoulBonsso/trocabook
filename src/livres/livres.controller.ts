@@ -6,6 +6,7 @@ import {
     Param,
     Patch,
     Post,
+    Query,
     Req,
     UseGuards,
 } from '@nestjs/common';
@@ -27,6 +28,12 @@ export class LivresController {
     // req.user is set by AuthGuard
     return this.livresService.create(createLivreDto, req.user.uid);
   }
+
+  @Get('search')
+  search(@Query() query: any) {
+    return this.livresService.search(query);
+  }
+
 
   @Get()
   findAll() {
@@ -52,4 +59,10 @@ export class LivresController {
   remove(@Param('id') id: string) {
     return this.livresService.remove(id);
   }
+
+  @Patch(':id/statut')
+  updateStatut(@Param('id') id: string, @Body('statut') statut: 'disponible' | 'en_negociation' | 'echange') {
+    return this.livresService.updateStatut(id, statut);
+  }
 }
+

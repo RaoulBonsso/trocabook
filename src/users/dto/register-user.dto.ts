@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
     IsArray,
+    IsBoolean,
     IsEmail,
     IsNotEmpty,
     IsNumber,
@@ -8,6 +9,7 @@ import {
     IsString,
     Length
 } from 'class-validator';
+
 
 export class RegisterUserDto {
   @ApiProperty({ description: "The user's first name" })
@@ -75,4 +77,10 @@ export class RegisterUserDto {
   @IsOptional()
   @IsString({ each: true })
   roles?: string[];
+
+  @ApiProperty({ description: "Whether the user accepted the CGU" })
+  @IsNotEmpty()
+  @IsBoolean()
+  cgu_valide: boolean;
 }
+

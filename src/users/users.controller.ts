@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { IdToken } from '../common/decorators/id-token.decorator';
 import { AuthGuard } from '../common/guards/auth.guard';
@@ -32,6 +32,23 @@ export class UsersController {
   async profile(@IdToken() token: string) {
     return await this.firebaseService.verifyIdToken(token);
   }
+
+  @Get('me')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  async getFullProfile(@IdToken() token: string) {
+    const decoded = await this.firebaseService.verifyIdToken(token);
+    return await this.usersService.findOne(decoded.uid);
+  }
+
+  @Patch('me')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  async updateMyProfile(@IdToken() token: string, @Body() updateData: any) {
+    const decoded = await this.firebaseService.verifyIdToken(token);
+    return await this.usersService.updateProfile(decoded.uid, updateData);
+  }
+
 
   @Get()
   @UseGuards(AuthGuard)

@@ -3,11 +3,17 @@ import { FirebaseService } from '../firebase/firebase.service';
 import { CreateEvaluationDto } from './dto/create-evaluation.dto';
 import { Evaluation } from './entities/evaluation.entity';
 
+import { ReputationService } from '../common/services/reputation.service';
+
 @Injectable()
 export class EvaluationsService {
   private collectionName = 'evaluations';
 
-  constructor(private readonly firebaseService: FirebaseService) {}
+  constructor(
+    private readonly firebaseService: FirebaseService,
+    private readonly reputationService: ReputationService,
+  ) {}
+
 
   async create(createEvaluationDto: CreateEvaluationDto, evaluateurId: string): Promise<Evaluation> {
     const firestore = this.firebaseService.getFirestore();
@@ -20,11 +26,11 @@ export class EvaluationsService {
     };
     await docRef.set(evaluation);
     
-    // Optional: Update user's average rating (note_moyenne)
-    // This requires fetching all evaluations for the user and recalculating, or keeping a running average.
-    // For simplicity, skipping for now, but should be noted.
+    // Update user's reputation and badges
+    await this.reputationService.updateBadges(createEvaluationDto.evalue_id);
     
     return evaluation;
+
   }
 
   async findAllForUser(userId: string): Promise<Evaluation[]> {

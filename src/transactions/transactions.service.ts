@@ -2,15 +2,21 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { FirebaseService } from '../firebase/firebase.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
-import { EchangeLivre } from './entities/echange-livre.entity';
+
 import { Echange } from './entities/echange.entity';
+
+import { ReputationService } from '../common/services/reputation.service';
 
 @Injectable()
 export class TransactionsService {
   private collectionName = 'echanges'; // Changed from 'transactions'
   private livresCollectionName = 'echange_livres';
 
-  constructor(private readonly firebaseService: FirebaseService) {}
+  constructor(
+    private readonly firebaseService: FirebaseService,
+    private readonly reputationService: ReputationService,
+  ) {}
+
 
   async create(createTransactionDto: CreateTransactionDto, demandeurId: string): Promise<Echange> {
     const firestore = this.firebaseService.getFirestore();
@@ -22,24 +28,48 @@ export class TransactionsService {
       id: echangeRef.id,
       parent_offreur_id: createTransactionDto.parent_offreur_id,
       parent_demandeur_id: demandeurId,
+      type: createTransactionDto.type,
+      prix: createTransactionDto.prix,
       statut: 'propose',
       date_creation: new Date(),
     };
     batch.set(echangeRef, echange);
 
-    // Create EchangeLivre (the book being requested)
+    // Create EchangeLivre
     const echangeLivreRef = firestore.collection(this.livresCollectionName).doc();
-    const echangeLivre: EchangeLivre = {
+    batch.set(echangeLivreRef, {
       id: echangeLivreRef.id,
       echange_id: echange.id,
       livre_id: createTransactionDto.livre_id,
-      role: 'donne', // The offreur gives this book
-    };
-    batch.set(echangeLivreRef, echangeLivre);
+      role: 'donne',
+    });
 
     await batch.commit();
     return echange;
   }
+
+  async negotiate(id: string, proposedPrice?: number): Promise<Echange> {
+    const firestore = this.firebaseService.getFirestore();
+    const docRef = firestore.collection(this.collectionName).doc(id);
+    
+    const update: any = { statut: 'en_negociation' };
+    if (proposedPrice !== undefined) {
+      update.prix = proposedPrice;
+    }
+    
+    await docRef.update(update);
+    return this.findOne(id);
+  }
+
+  async accept(id: string): Promise<Echange> {
+    const firestore = this.firebaseService.getFirestore();
+    await firestore.collection(this.collectionName).doc(id).update({
+      statut: 'accepte',
+      date_validation: new Date(),
+    });
+    return this.findOne(id);
+  }
+
 
   async findAll(userId: string): Promise<Echange[]> {
     const firestore = this.firebaseService.getFirestore();
@@ -93,7 +123,15 @@ export class TransactionsService {
     const updates: any = { ...updateTransactionDto };
     
     await docRef.update(updates);
+    
+    if (updates.statut === 'termine') {
+        const echange = await this.findOne(id);
+        await this.reputationService.updateBadges(echange.parent_offreur_id);
+        await this.reputationService.updateBadges(echange.parent_demandeur_id);
+    }
+
     const updatedDoc = await docRef.get();
+
     const data = updatedDoc.data()!;
     return {
         ...data,

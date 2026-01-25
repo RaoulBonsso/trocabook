@@ -15,4 +15,6 @@ export class Livre {
   localisation_lat: number;
   localisation_lng: number;
   date_ajout: Date;
+  enfant_id: string;
 }
+

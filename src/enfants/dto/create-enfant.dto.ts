@@ -1,5 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+
 
 export class CreateEnfantDto {
   @ApiProperty({ description: 'Parent ID' })
@@ -22,13 +23,15 @@ export class CreateEnfantDto {
   @IsString()
   classe: string;
 
-  @ApiProperty({ description: 'Ecole' })
-  @IsNotEmpty()
+  @ApiPropertyOptional({ description: 'Ecole' })
+  @IsOptional()
   @IsString()
-  ecole: string;
+  ecole?: string;
 
   @ApiProperty({ description: 'Matieres', type: [String] })
   @IsArray()
+  @IsOptional()
   @IsString({ each: true })
-  matieres: string[];
+  matieres?: string[];
 }
+

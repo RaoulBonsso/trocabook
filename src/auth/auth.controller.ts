@@ -42,4 +42,26 @@ export class AuthController {
   refreshAuth(@Body() dto: RefreshTokenDto) {
     return this.authService.refreshAuthToken(dto.refreshToken);
   }
+
+  /**
+   * Google One-Click Login.
+   * Accepts a Firebase ID token from Google authentication.
+   */
+  @Post('google')
+  @HttpCode(200)
+  loginWithGoogle(@Body('idToken') idToken: string) {
+    return this.authService.loginWithGoogle(idToken);
+  }
+
+  /**
+   * Phone Number Login.
+   * Accepts a Firebase ID token from Phone authentication.
+   */
+  @Post('phone')
+  @HttpCode(200)
+  loginWithPhone(@Body('idToken') idToken: string) {
+    return this.authService.loginWithPhone(idToken);
+  }
 }
+
+
