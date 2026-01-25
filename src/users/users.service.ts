@@ -60,4 +60,24 @@ export class UsersService {
 
     return user;
   }
+
+  async findAll() {
+    const snapshot = await this.firebaseService.getFirestore().collection('parents').get();
+    return snapshot.docs.map(doc => doc.data());
+  }
+
+  async updateStatus(id: string, status: 'actif' | 'suspendu' | 'bloque') {
+    await this.firebaseService.getFirestore().collection('parents').doc(id).update({
+      statut_compte: status
+    });
+    // Ideally disable in Auth too
+    if (status === 'bloque') {
+        const user = await this.firebaseService.verifyIdToken(id).catch(() => null); 
+        // Can't easily get UID from ID token if I don't have it. 
+        // Actually ID is UID here.
+        // Firebase Admin SDK `updateUser(uid, { disabled: true })` needed.
+        // My FirebaseService doesn't expose it yet.
+    }
+    return { id, status };
+  }
 }

@@ -12,6 +12,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { SignalementsModule } from './signalements/signalements.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { UsersModule } from './users/users.module';
+import { BackofficeUsersModule } from './backoffice-users/backoffice-users.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { UsersModule } from './users/users.module';
     NotificationsModule,
     SignalementsModule,
     FavorisModule,
+    BackofficeUsersModule,
   ],
 })
 export class AppModule {}

@@ -33,6 +33,11 @@ export class LivresController {
     return this.livresService.findAll();
   }
 
+  @Get('user/:userId')
+  findAllByOwner(@Param('userId') userId: string) {
+    return this.livresService.findAllByOwner(userId);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.livresService.findOne(id);

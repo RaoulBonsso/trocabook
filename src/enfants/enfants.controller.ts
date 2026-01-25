@@ -31,6 +31,11 @@ export class EnfantsController {
     return this.enfantsService.findAll();
   }
 
+  @Get('parent/:parentId')
+  findAllByParent(@Param('parentId') parentId: string) {
+    return this.enfantsService.findAllByParent(parentId);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.enfantsService.findOne(id);

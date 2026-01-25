@@ -27,6 +27,12 @@ export class EnfantsService {
     return snapshot.docs.map((doc) => doc.data() as Enfant);
   }
 
+  async findAllByParent(parentId: string): Promise<Enfant[]> {
+    const firestore = this.firebaseService.getFirestore();
+    const snapshot = await firestore.collection(this.collectionName).where('parent_id', '==', parentId).get();
+    return snapshot.docs.map((doc) => doc.data() as Enfant);
+  }
+
   async findOne(id: string): Promise<Enfant> {
     const firestore = this.firebaseService.getFirestore();
     const doc = await firestore.collection(this.collectionName).doc(id).get();

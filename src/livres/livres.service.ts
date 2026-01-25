@@ -37,6 +37,18 @@ export class LivresService {
     });
   }
 
+  async findAllByOwner(userId: string): Promise<Livre[]> {
+    const firestore = this.firebaseService.getFirestore();
+    const snapshot = await firestore.collection(this.collectionName).where('proprietaire_id', '==', userId).get();
+    return snapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+            ...data,
+            date_ajout: data.date_ajout?.toDate ? data.date_ajout.toDate() : data.date_ajout
+        } as Livre;
+    });
+  }
+
   async findOne(id: string): Promise<Livre> {
     const firestore = this.firebaseService.getFirestore();
     const doc = await firestore.collection(this.collectionName).doc(id).get();
